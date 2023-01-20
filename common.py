@@ -2,6 +2,7 @@
 
 import numpy as np
 from sphere import Sphere
+import json
 
 
 lx, ly #System size
@@ -53,8 +54,15 @@ def init_algorithm():
 def phase_plot():
     pass
 
-def init_system():
-    pass
+def init_system(init_filename=None):
+    with open(init_filename,"r") as f:
+        params = json.load(f)
+    return params
+
+   
+
+
+    
 
 def total_kinetic_energy():
     pass
