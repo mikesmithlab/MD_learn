@@ -11,7 +11,18 @@ def normalize(dx, L):
 
 
 class Sphere:
-    def __init__(self, pos=np.array([0,0,0]), vel=np.array([0,0,0]), radius : float =0.0, mass : float =0.0, ptype : int=0.0, material : dict=None):
+    def __init__(self, 
+                pos=np.array([0,0,0]), 
+                vel=np.array([0,0,0]), 
+                radius : float =0.0, 
+                mass : float =0.0, 
+                ptype : int=0.0, 
+                material : dict=None, 
+                rtd2=np.array([0,0,0]),
+                rtd3=np.array([0,0,0]),
+                rtd4=np.array([0,0,0]), 
+                _force = np.array([0,0,0])):
+        
         self._r = radius
         self._m = mass
         self._J = (2/5)*self._m * self._r*self._r # ???p45 says 2/5MR**2 but code shows 1/2MR**2
@@ -23,9 +34,11 @@ class Sphere:
 
         self.rtd0 = pos
         self.rtd1 = vel
-        self.rtd2 = np.array([0,0,0])
-        self.rtd3 = np.array([0,0,0])
-        self.rtd4 = np.array([0,0,0])
+        self.rtd2 = rtd2
+        self.rtd3 = rtd3
+        self.rtd4 = rtd4
+
+        self._force = _force
 
     def predict(self, dt):
         """predict is the first half of the Gear's integration scheme"""

@@ -13,7 +13,6 @@ def main(particle_file, sim_file):
     #init_algorithm()
     #phase_plot()
     for i in range(sim_params['nstep']):
-        print
         #step()
         if (i+1)%sim_params['nprint'] == 0:
             print('print')
