@@ -11,21 +11,21 @@ def normalize(dx, L):
 
 
 class Sphere:
-    def __init__(self, _r, _J, _m, _ptype, material):
-        self._r = _r
-        self._J = _J
-        self._m = _m
+    def __init__(self, pos=np.array([0,0,0]), vel=np.array([0,0,0]), radius=None, mass=0, _ptype=0, material=None):
+        self._r = radius
+        self._m = mass
+        self._J = (2/5)*self._m * self._r*self._r # ???p45 says 2/5MR**2 but code shows 1/2MR**2
         self._ptype = _ptype
         self._Y = material['Y']
         self._A = material['A']
         self._mu = material['mu']
         self._gamma = material['gamma']
 
-        self.rtd0
-        self.rtd1
-        self.rtd2
-        self.rtd3
-        self.rtd4
+        self.rtd0 = pos
+        self.rtd1 = vel
+        self.rtd2 = np.array([0,0,0])
+        self.rtd3 = np.array([0,0,0])
+        self.rtd4 = np.array([0,0,0])
 
     def predict(self, dt):
         """predict is the first half of the Gear's integration scheme"""

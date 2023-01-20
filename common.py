@@ -2,21 +2,9 @@
 
 import numpy as np
 from sphere import Sphere
-import json
 
 
-<<<<<<< HEAD
 
-=======
-lx, ly #System size
-x0, y0 # coord lower left corner
-no_of_particles
-nstep
-nprint
-nenergy
-time=0 # elapsed time
-timestep
->>>>>>> a06d25bfafd2b26e1302978aa0fdc4da0d46815b
 
 output_folder = '~/Documents/Programming/MD_learn/Sim_Data/'
 fphase ='phase.dat'# output file - phase space
@@ -55,21 +43,20 @@ def init_algorithm():
     pass
 
 def phase_plot():
-<<<<<<< HEAD
+    pass
     
-=======
-    """Dumps all particle coords and params to a file"""
-
->>>>>>> a06d25bfafd2b26e1302978aa0fdc4da0d46815b
 
 def init_system(init_filename=None):
-    with open(init_filename,"r") as f:
-        params = json.load(f)
-    return params
-
+    with open(init_filename, "r") as f:
+        initial_conds =np.loadtxt(f)
+    
     particles = []
+    for condition in initial_conds:
+        particles.append(Sphere(pos=condition[1:4],vel=condition[4:7],radius=condition[7], moment_inertia=condition[8], mass=condition[9]))
+    
+    return particles
 
-def dump_particle(f, index, x, y, 0, vx, vy, 0, radius, mass, ptype):
+def dump_particle(f, index, x, y, z, vx, vy, vz, radius, mass, ptype):
     "Open f handle using with open('test3.dat','a') as f:"
     np.savetxt(f, [[index, x, y, 0, vx, vy, 0, radius, mass, ptype]])
 
@@ -87,20 +74,6 @@ def total_kinetic_energy():
     return sum
 
 
-def main(init_file):
-    init_system(init_file)
-    init_algorithm()
-    phase_plot()
-    for i in range(nstep):
-        step()
-        if (i+1)%nprint == 0:
-            phase_plot(fphase)
-        if (i+1)%nenergy == 0:
-            total_kinetic_energy(fenergy)
 
 
 
-
-
-if __name__ == '__main__':
-    main(init_file)

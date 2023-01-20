@@ -17,11 +17,12 @@ def write_sim_initfile(pathname='Sim_Data/', filename='init.dat'):
         Rmin=0.004
         for i in range(67):
             for k in range(30):
-                centerx=0.3115+0.013*i
-                centery=0.6+0.013*k
+                centerx=0.3115+0.013*k
+                centery=0.6+0.013*i
                 variation=np.random.uniform()
                 r=Rmin*Rmax/(Rmax-variation*(Rmax-Rmin))
                 dump_particle(f, 0, centerx, centery,0, 0, 0, 0, r, r*r/(Rmax*Rmax), 0)
+
 
 if __name__=='__main__':
     write_sim_initfile()
