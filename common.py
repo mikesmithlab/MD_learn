@@ -5,19 +5,11 @@ from sphere import Sphere
 import json
 
 
-lx, ly #System size
-x0, y0 # coord lower left corner
-no_of_particles 
-nstep
-nprint
-nenergy
-time=0 # elapsed time
-timestep
+
 
 output_folder = '~/Documents/Programming/MD_learn/Sim_Data/'
 fphase ='phase.dat'# output file - phase space
 fenergy='energy.dat' # output file - system energy
-G # vector for gravity
 
 particle =[]# vector containing all objects of type Sphere
 
@@ -52,7 +44,7 @@ def init_algorithm():
     pass
 
 def phase_plot():
-    pass
+    
 
 def init_system(init_filename=None):
     with open(init_filename,"r") as f:
