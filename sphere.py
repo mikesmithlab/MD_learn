@@ -11,6 +11,17 @@ def normalize(dx, L):
 
 
 class Sphere:
+    """Sphere particle class
+    
+    Instances are created by common.init_system which reads particle
+    pos, vel etc from a .dat file. The material type is a dictionary 
+    imported from materials.py
+
+    particles are updated by:
+        1. self.predict yielding new values, 
+        2. calculating forces 
+        3. self.correct to create more accurate answer
+    """
     def __init__(self, 
                 pos=np.array([0,0,0]), 
                 vel=np.array([0,0,0]), 
