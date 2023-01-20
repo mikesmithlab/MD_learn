@@ -3,23 +3,23 @@ import numpy as np
 
 
 def normalize(dx, L):
-    while dx<-L/2:
+    if dx<-L/2:
         dx+=L
-    while dx>=L/2:
+    if dx>=L/2:
         dx-=L
     return dx
 
 
 class Sphere:
-    def __init__(self, pos=np.array([0,0,0]), vel=np.array([0,0,0]), radius=None, mass=0, _ptype=0, material=None):
+    def __init__(self, pos=np.array([0,0,0]), vel=np.array([0,0,0]), radius : float =0.0, mass : float =0.0, ptype : int=0.0, material : dict=None):
         self._r = radius
         self._m = mass
         self._J = (2/5)*self._m * self._r*self._r # ???p45 says 2/5MR**2 but code shows 1/2MR**2
-        self._ptype = _ptype
-        self._Y = material['Y']
-        self._A = material['A']
-        self._mu = material['mu']
-        self._gamma = material['gamma']
+        self._ptype = ptype
+        self._Y = material['Y_modulus']
+        self._A = material['A_damping']
+        self._mu = material['mu_coulomb_friction']
+        self._gamma = material['gamma_tangential_damping']
 
         self.rtd0 = pos
         self.rtd1 = vel
@@ -91,12 +91,8 @@ class Sphere:
             self.rtd0.y -= ly
     
     def kinetic_energy(self):
-        return self._m *(self.rtd1.x * self.rtd1.x / 2 + self.rtd1.y * self.rtd1.y / 2) + self._J * (self.rtd1.phi self.rtd1.phi / 2)
+        return self._m *(self.rtd1.x * self.rtd1.x / 2 + self.rtd1.y * self.rtd1.y / 2) + self._J * (self.rtd1.phi * self.rtd1.phi / 2)
     
-    def output(self, f):
-        data = np.array([self.rtd0, self.rtd1, self._r, self._m, self._ptype, self._Y, self._A, self._mu, self._gamma, self._force, self.rtd3, self._rtd4])
-        np.savetxt("temp.txt",data, "w")
-        
         
 
 

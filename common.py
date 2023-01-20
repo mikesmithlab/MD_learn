@@ -3,6 +3,7 @@
 import numpy as np
 from sphere import Sphere
 
+from materials import material_a
 
 
 
@@ -52,8 +53,7 @@ def init_system(init_filename=None):
     
     particles = []
     for condition in initial_conds:
-        particles.append(Sphere(pos=condition[1:4],vel=condition[4:7],radius=condition[7], moment_inertia=condition[8], mass=condition[9]))
-    
+        particles.append(Sphere(pos=condition[1:4],vel=condition[4:7],radius=condition[7], mass=condition[8], ptype=condition[9], material=material_a))  
     return particles
 
 def dump_particle(f, index, x, y, z, vx, vy, vz, radius, mass, ptype):
