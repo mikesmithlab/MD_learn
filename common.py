@@ -1,8 +1,6 @@
 """Common - Contains code and declarations of global variables / functions"""
 
 import numpy as np
-from sphere import Sphere
-
 from materials import material_a
 
 
@@ -13,8 +11,9 @@ fenergy='energy.dat' # output file - system energy
 
 particle =[]# vector containing all objects of type Sphere
 
-def step():
-    pass
+def step(dt,time,particles):
+    integrate(dt,time,particles)
+    return particles
 
 def make_forces():
     for i in range(particle.size()):
@@ -23,21 +22,22 @@ def make_forces():
                 force(particle[i], particle[k],lx,ly)
 
 
-def integrate():
+def integrate(dt,time,particles):
     #Mobile particles have particle.ptype()==0
-    for i in range(particle.size()):
-        if particle[i].ptype()==0:
-            particle[i].set_force_to_zero()
-            particle[i].predict(timestep)
+    for particle in particles:
+        if particle.ptype==0:
+            particle.set_force_to_zero()
+            particle.predict(dt)
         else:
-            particle[i].boundary_conditions(i, timestep, time)
+            particle.boundary_conditions(i, dt, time)
     make_forces()
-    for i in range(particle.size()):
-        if particle[i].ptype()==0:
-            particle[i].correct(timestep)
-    for i in range(particle.size()):
-        particle[i].periodic_bc(x_0, y_0, lx, ly)
-    time+=timestep
+    for particle in particles:
+        if particle.ptype()==0:
+            particle.correct(dt)
+    for particle in particles:
+        particle.periodic_bc(x_0, y_0, lx, ly)
+    time+=dt
+    return particles
 
 
 def init_algorithm():
@@ -45,20 +45,23 @@ def init_algorithm():
 
 def phase_plot():
     pass
-    
+
 
 def init_system(init_filename=None):
+    """Generate initial state of simulation
+
+    Reads coords from .dat file created in setup.py and stored in sim_input_data
+
+    returns a list of particle instances
+    """
     with open(init_filename, "r") as f:
         initial_conds =np.loadtxt(f)
-    
-    particles = []
-    for condition in initial_conds:
-        particles.append(Sphere(pos=condition[1:4],vel=condition[4:7],radius=condition[7], mass=condition[8], ptype=condition[9], material=material_a))  
-    return particles
 
-def dump_particle(f, index, x, y, z, vx, vy, vz, radius, mass, ptype):
-    "Open f handle using with open('test3.dat','a') as f:"
-    np.savetxt(f, [[index, x, y, 0, vx, vy, 0, radius, mass, ptype]])
+    particles = []
+    #Each row represents a new particle
+    for condition in initial_conds:
+        particles.append(Sphere(particle_id=condition[1],pos=condition[2:5],vel=condition[5:8],radius=condition[8], mass=condition[9], ptype=condition[10], material=material_a, rtd2=condition[11:14], rtd3=condition[14:17],rtd4=condition[17:20],force=condition[20:23]))
+    return particles
 
 
 

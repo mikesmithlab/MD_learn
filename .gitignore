@@ -1,2 +1,3 @@
-sim_data/
+sim_input_data/
 _pycache_/
+sim_output_data/

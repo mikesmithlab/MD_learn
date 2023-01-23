@@ -9,6 +9,30 @@ def normalize(dx, L):
         dx-=L
     return dx
 
+class VectorList(object):
+    def __init__(self, x, y, z):
+        self.vec = [x, y, z]
+
+    def __repr__(self):
+        return '{self.__class__.__name__}(x={self.vec[0]}, y={self.vec[1]}, z={self.vec[2]})'.format(self=self)
+
+    def __add__(self, other):
+        x1, y1, z1 = self.vec
+        x2, y2, z2 = other.vec
+        return VectorList(x1+x2, y1+y2, z1+z2)
+
+    def crossproduct(self, other):
+        x1, y1, z1 = self.vec
+        x2, y2, z2 = other.vec
+        return VectorList(y1*z2 - z1*y2,
+                          z1*x2 - x1*z2,
+                          x1*y2 - y1*x1)
+
+    def scalarproduct(self, other):
+        x1, y1, z1 = self.vec
+        x2, y2, z2 = other.vec
+        return x1*x2 + y1*y2 + z1*z2
+
 
 class Sphere:
     """Sphere particle class
@@ -24,9 +48,9 @@ class Sphere:
 
     pos = [x, y, phi]
     """
-    particle_id=0
 
     def __init__(self,
+                particle_id=0,
                 pos=np.array([0,0,0]),
                 vel=np.array([0,0,0]),
                 radius : float =0.0,
@@ -38,8 +62,7 @@ class Sphere:
                 rtd4=np.array([0,0,0]),
                 force = np.array([0,0,0])):
 
-        Sphere.particle_id += 1
-        self.particle_id = Sphere.particle_id
+        self.particle_id=particle_id
         self.radius = radius
         self.mass = mass
         self.inertia = (2/5)*self.mass * self.radius*self.radius # ???p45 says 2/5MR**2 but code shows 1/2MR**2

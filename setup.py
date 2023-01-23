@@ -6,7 +6,7 @@ from materials import material_a
 from input_output_file import record_state
 
 
-def write_sim_initfile(sim_param_path='sim_param_templates/',sim_params='sim_init.json', pathname='sim_data/', filename='init.dat'):
+def write_sim_initfile(sim_param_path='sim_param_templates/',sim_params='sim_init.json', pathname='sim_input_data/', filename='init.dat'):
     ext= filename.split('.')[1]
     filename = filename.split('.')[0] + format_datetime_to_str(now(), "%Y%m%d_%H%M%S") + '.'
     filename_params = filename + 'json'
@@ -24,15 +24,20 @@ def write_sim_initfile(sim_param_path='sim_param_templates/',sim_params='sim_ini
     force = np.array([0,0,0])
 
 
+    particle_id=0
+
     """Boundary Particles"""
     for i in range(11):
         pos=np.array([0.45+i*0.01, 0.19,0,])#[x,y,phi]
-        particles.append(Sphere(pos=pos, vel=vel, radius=radius, mass=mass, ptype=ptype, material=material_a, rtd2=rtd2, rtd3=rtd3, rtd4=rtd4, force=force))
+        particles.append(Sphere(particle_id=particle_id, pos=pos, vel=vel, radius=radius, mass=mass, ptype=ptype, material=material_a, rtd2=rtd2, rtd3=rtd3, rtd4=rtd4, force=force))
+        particle_id+=1
     for i in range(50):
         pos=np.array([0.55+(i+0.5)*0.005, i*0.01+0.2,0])
-        particles.append(Sphere(pos=pos, vel=vel, radius=radius, mass=mass, ptype=ptype, material=material_a, rtd2=rtd2, rtd3=rtd3, rtd4=rtd4, force=force))
+        particles.append(Sphere(particle_id=particle_id,pos=pos, vel=vel, radius=radius, mass=mass, ptype=ptype, material=material_a, rtd2=rtd2, rtd3=rtd3, rtd4=rtd4, force=force))
+        particle_id+=1
         pos=np.array([0.45-(i+0.5)*0.005, i*0.01+0.2,0])
-        particles.append(Sphere(pos=pos, vel=vel, radius=radius, mass=mass, ptype=ptype, material=material_a, rtd2=rtd2, rtd3=rtd3, rtd4=rtd4, force=force))
+        particles.append(Sphere(particle_id=particle_id,pos=pos, vel=vel, radius=radius, mass=mass, ptype=ptype, material=material_a, rtd2=rtd2, rtd3=rtd3, rtd4=rtd4, force=force))
+        particle_id+=1
 
     """free particles"""
     Rmax=0.006
@@ -44,7 +49,8 @@ def write_sim_initfile(sim_param_path='sim_param_templates/',sim_params='sim_ini
             pos=np.array([centerx, centery, 0])
             variation=np.random.uniform()
             r=Rmin*Rmax/(Rmax-variation*(Rmax-Rmin))
-            particles.append(Sphere(pos=pos, vel=vel, radius=r, mass=mass, ptype=ptype, material=material_a, rtd2=rtd2, rtd3=rtd3, rtd4=rtd4, force=force))
+            particles.append(Sphere(particle_id=particle_id,pos=pos, vel=vel, radius=r, mass=mass, ptype=ptype, material=material_a, rtd2=rtd2, rtd3=rtd3, rtd4=rtd4, force=force))
+            particle_id+=1
 
     with open(pathname + filename_init, "w") as f:
         record_state(f, 0, particles)
