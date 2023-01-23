@@ -1,7 +1,6 @@
 {
     "gravity":[0,-9.81, 0],
     "time":0,
-    "nstep":100,
     "timestep":1e-6,
     "nstep":5000000,
     "nprint":1000,

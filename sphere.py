@@ -12,44 +12,50 @@ def normalize(dx, L):
 
 class Sphere:
     """Sphere particle class
-    
+
     Instances are created by common.init_system which reads particle
-    pos, vel etc from a .dat file. The material type is a dictionary 
+    pos, vel etc from a .dat file. The material type is a dictionary
     imported from materials.py
 
     particles are updated by:
-        1. self.predict yielding new values, 
-        2. calculating forces 
+        1. self.predict yielding new values,
+        2. calculating forces
         3. self.correct to create more accurate answer
+
+    pos = [x, y, phi]
     """
-    def __init__(self, 
-                pos=np.array([0,0,0]), 
-                vel=np.array([0,0,0]), 
-                radius : float =0.0, 
-                mass : float =0.0, 
-                ptype : int=0.0, 
-                material : dict=None, 
+    particle_id=0
+
+    def __init__(self,
+                pos=np.array([0,0,0]),
+                vel=np.array([0,0,0]),
+                radius : float =0.0,
+                mass : float =0.0,
+                ptype : int=0.0,
+                material : dict=None,
                 rtd2=np.array([0,0,0]),
                 rtd3=np.array([0,0,0]),
-                rtd4=np.array([0,0,0]), 
-                _force = np.array([0,0,0])):
-        
-        self._r = radius
-        self._m = mass
-        self._J = (2/5)*self._m * self._r*self._r # ???p45 says 2/5MR**2 but code shows 1/2MR**2
-        self._ptype = ptype
+                rtd4=np.array([0,0,0]),
+                force = np.array([0,0,0])):
+
+        Sphere.particle_id += 1
+        self.particle_id = Sphere.particle_id
+        self.radius = radius
+        self.mass = mass
+        self.inertia = (2/5)*self.mass * self.radius*self.radius # ???p45 says 2/5MR**2 but code shows 1/2MR**2
+        self.ptype = ptype
         self._Y = material['Y_modulus']
         self._A = material['A_damping']
         self._mu = material['mu_coulomb_friction']
         self._gamma = material['gamma_tangential_damping']
 
-        self.rtd0 = pos
-        self.rtd1 = vel
+        self.pos = pos
+        self.vel = vel
         self.rtd2 = rtd2
         self.rtd3 = rtd3
         self.rtd4 = rtd4
 
-        self._force = _force
+        self.force = force
 
     def predict(self, dt):
         """predict is the first half of the Gear's integration scheme"""
@@ -58,8 +64,8 @@ class Sphere:
         a3 = a2 * dt/2
         a4 = a3 * dt/4
 
-        self.rtd0 += a1 * self.rtd1 + a2 * self.rtd2 +a3 * self.rtd3 + a4 * self.rtd4
-        self.rtd1 += a1 * self.rtd2 +a2 * self.rtd3 + a3 * self.rtd4
+        self.pos += a1 * self.vel + a2 * self.rtd2 +a3 * self.rtd3 + a4 * self.rtd4
+        self.vel += a1 * self.rtd2 +a2 * self.rtd3 + a3 * self.rtd4
         self.rtd2 += a1 * self.rtd3 + a2 * self.rtd4
         self.rtd3 += a1 * self.rtd4
 
@@ -74,8 +80,8 @@ class Sphere:
         accel = self._accel(force, G)
 
         corr = accel - self.rtd2
-        self.rtd0 += coeff0 * corr
-        self.rtd1 += coeff1 * corr
+        self.pos += coeff0 * corr
+        self.vel += coeff1 * corr
         self.rtd2 += accel
         self.rtd3 += coeff3 * corr
         self.rtd4 += coeff4 * corr
@@ -83,9 +89,9 @@ class Sphere:
 
     def _accel(self, force, G):
         return np.array([
-            (1/self._m)*force.x + G.x, 
-            (1/self._m)*force.y + G.y,
-            (1/self._J)*force.phi + G.phi
+            (1/self.mass)*force.x + G.x,
+            (1/self.mass)*force.y + G.y,
+            (1/self.inertia)*force.phi + G.phi
         ])
 
     def boundary_conditions(self, n, timestep, time):
@@ -99,29 +105,30 @@ class Sphere:
             pass
         elif self.ptype == 2:
             # particle oscillates horizontally
-            self.x = 0.5-0.4*np.cos(10*time)
-            self.y = 0.1
-            self.vx = 10*0.4*np.sin(time)
-            self.vy = 10
+            self.pos[0]= 0.5-0.4*np.cos(10*time)
+            self.pos[1] = 0.1
+            self.vel[0] = 10*0.4*np.sin(time)
+            self.vel[1] = 10
+
 
     def periodic_bc(self, x_0, y_0, lx, ly):
-        if self.rtd0.x < x_0:
-            self.rtd0.x += lx
-        elif self.rtd0.x > x_0+lx:
-            self.rtd0.x -= lx
-        if self.rtd0.y < y_0:
-            self.rtd0.y += ly
-        elif self.rtd0.y > y_0+ly:
-            self.rtd0.y -= ly
-    
+        if self.pos[0] < x_0:
+            self.pos[0] += lx
+        elif self.pos[0] > x_0+lx:
+            self.pos[0] -= lx
+        if self.pos[1] < y_0:
+            self.pos[1] += ly
+        elif self.pos[1] > y_0+ly:
+            self.pos[1] -= ly
+
     def kinetic_energy(self):
-        return self._m *(self.rtd1.x * self.rtd1.x / 2 + self.rtd1.y * self.rtd1.y / 2) + self._J * (self.rtd1.phi * self.rtd1.phi / 2)
-    
-        
+        return self.mass *(self.vel[0] * self.vel[0] / 2 + self.vel[1] * self.vel[1] / 2) + self.inertia * (self.vel[2] * self.vel[2] / 2)
 
 
 
-def force(p1, p2, lx, ly):
+
+
+def calc_force(p1, p2, lx, ly):
     dx=normalize(p1.x-p2.x,lx)
     dy=normalize(p1.y-p2.y,ly)
     rr=np.sqrt(dx*dx + dy*dy)
@@ -149,7 +156,7 @@ def force(p1, p2, lx, ly):
         xidot = -(ex*dvx + ey*dvy)
         vtrel=-dvx*ey + dvy*ex + p1.omega * p1.r - p2.omega * p2.p.r
         fn = np.sqrt(xi) * Y * np.sqrt(reff) * (xi + A*xidot)
-        ft=-gamma*vtrel 
+        ft=-gamma*vtrel
 
         if fn < 0:
             fn = 0
@@ -161,5 +168,5 @@ def force(p1, p2, lx, ly):
             p1.add_force(np.array([fn*ex-ft*ey,fn*ey+ft*ex, r1*ft]))
         if p2.type == 0:
             p2.add_force(np.array([-fn*ex-ft*ey,-fn*ey+ft*ex, -r2*ft]))
-           
+
 
