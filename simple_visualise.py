@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-pathname='Sim_Data/'
-filename='init.dat'
+pathname='sim_data/'
+filename='init20230123_105242.dat'
 
 with open(pathname + filename, "r") as f:
     data = np.loadtxt(f)

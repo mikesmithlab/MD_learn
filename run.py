@@ -3,10 +3,12 @@ from common import init_system, init_algorithm
 import json
 
 
-def main(particle_file, sim_file):
+def main(input_files, output_files):
     """This is the main function that intialises and runs the simulation loop"""
-    with open(sim_file,"r") as f_sim:
-        sim_params = json.load(f_sim)
+    with open(sim_file,"r") as f_sim_params:
+        sim_params = json.load(f_sim_params)
+        
+    with open(sim_output_file, "a") as f_out:
     
     #Setup a vector of particles from initialisation file.
     particles = init_system(particle_file)
@@ -25,7 +27,8 @@ def main(particle_file, sim_file):
 
 if __name__ == '__main__':
     
-    
+    init_path = 'sim_data/'    
+    init_file = 'init20230123_105242'
+    output_path = 'output_data/'
 
-
-    main('Sim_Data/init.dat', 'sim_init.json')
+    main(input_files = init_path + init_file)
