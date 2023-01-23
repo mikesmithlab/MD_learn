@@ -31,7 +31,8 @@ def write_sim_initfile(sim_param_path='sim_param_templates/',sim_params='sim_ini
     for i in range(50):
         pos=np.array([0.55+(i+0.5)*0.005, i*0.01+0.2,0])
         particles.append(Sphere(pos=pos, vel=vel, radius=radius, mass=mass, ptype=ptype, material=material_a, rtd2=rtd2, rtd3=rtd3, rtd4=rtd4, force=force))
-
+        pos=np.array([0.45-(i+0.5)*0.005, i*0.01+0.2,0])
+        particles.append(Sphere(pos=pos, vel=vel, radius=radius, mass=mass, ptype=ptype, material=material_a, rtd2=rtd2, rtd3=rtd3, rtd4=rtd4, force=force))
 
     """free particles"""
     Rmax=0.006
